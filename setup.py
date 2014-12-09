@@ -1,5 +1,4 @@
 import os
-import sys
 
 from setuptools import setup, find_packages
 
@@ -10,34 +9,25 @@ except IOError:
     README = ''
 
 install_requires = [
-    'pyramid>=1.2dev',
+    'pyramid',
     'pyramid_mako',
-    'switchboard>=1.1'
-    ]
-
-testing_extras = [
-    'nose',
-    'coverage',
-    ]
-
-docs_extras = [
-    'Sphinx',
+    'switchboard'
     ]
 
 setup(name='pyramid_switchboard',
-      version='2.2.1',
+      version='0.1',
       description=('A package which wraps the switchboard feature flipper '
                    'for Pyramid application development'),
       long_description=README,
       classifiers=[
-        "Intended Audience :: Developers",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2.6",
-        "Programming Language :: Python :: 2.7",
-        "Framework :: Pyramid",
-        "Topic :: Internet :: WWW/HTTP :: WSGI",
-        "License :: OSI Approved :: Apache Software License",
-        ],
+          "Intended Audience :: Developers",
+          "Programming Language :: Python",
+          "Programming Language :: Python :: 2.6",
+          "Programming Language :: Python :: 2.7",
+          "Framework :: Pyramid",
+          "Topic :: Internet :: WWW/HTTP :: WSGI",
+          "License :: OSI Approved :: Apache Software License",
+      ],
       keywords='wsgi pylons pyramid featureflipper',
       author=("Kyle Adams"),
       author_email="kadams54@gmail.com",
@@ -47,13 +37,5 @@ setup(name='pyramid_switchboard',
       include_package_data=True,
       zip_safe=False,
       install_requires=install_requires,
-      extras_require = {
-          'testing':testing_extras,
-          'docs':docs_extras,
-          },
-      package_data={'pyramid_switchboard': ['static/css/*', 'static/font/*',
-          'static/img/*', 'static/js/*', 'templates/*', 'panels/templates/*']
-          },
-      test_suite="pyramid_switchboard",
       entry_points='',
       )
