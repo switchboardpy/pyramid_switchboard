@@ -15,7 +15,7 @@ install_requires = [
     ]
 
 setup(name='pyramid_switchboard',
-      version='0.1',
+      version='0.2',
       description=('A package which wraps the switchboard feature flipper '
                    'for Pyramid application development'),
       long_description=README,
