@@ -1,19 +1,37 @@
 from pyramid.config import Configurator
 from pyramid.wsgi import wsgiapp2
-from pyramid.renderers import JSON
 
 from switchboard import configure
+
+
+def request_tween_factory(handler, registry):
+
+    def request_tween(request):
+        from switchboard import operator
+        operator.get_request = lambda: request
+        return handler(request)
+
+    return request_tween
+
 
 def includeme(config):
     """ Activate the switchboard; usually called via
     ``config.include('pyramid_switchboard')`` instead of being invoked
     directly. """
-    configure()
+    settings = config.registry.settings
+    # By setting nested to True, we're only looking for switchboard.* settings.
+    configure(settings, nested=True)
 
-    # Create the new application using the updated settings
-    application = make_application(config.registry.settings, config.registry)
+    # Setup the tween for injecting the request into Switchboard's context.
+    config.add_tween('pyramid_switchboard.request_tween_factory')
+
+    # Create the new application using the updated settings.
+    application = make_application(settings, config.registry)
     config.add_route('switchboard', '/_switchboard/*subpath')
-    config.add_view(wsgiapp2(application), route_name='switchboard')
+    permission = settings.get('switchboard.permission', 'admin')
+    config.add_view(wsgiapp2(application), route_name='switchboard',
+                    permission=permission)
+
 
 def make_application(settings, parent_registry):
     """ WSGI application for rendering the switchboard admin."""
