@@ -2,15 +2,15 @@ from pyramid.config import Configurator
 from pyramid.wsgi import wsgiapp2
 
 from switchboard import configure
+from switchboard.manager import context
 from switchboard.signals import request_finished
 
 
 def request_tween_factory(handler, registry):
 
     def request_tween(request):
-        from switchboard import operator
         # Inject the request into Switchboard's context.
-        operator.get_request = lambda: request
+        context['request'] = request
         response = handler(request)
         # Notify Switchboard that we're finished with the request.
         request_finished.send(request)
