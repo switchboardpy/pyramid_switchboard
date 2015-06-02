@@ -11,11 +11,11 @@ except IOError:
 install_requires = [
     'pyramid',
     'pyramid_mako',
-    'switchboard'
+    'switchboard>=1.3.0'
     ]
 
 setup(name='pyramid_switchboard',
-      version='0.3',
+      version='0.4',
       description=('A package which wraps the switchboard feature flipper '
                    'for Pyramid application development'),
       long_description=README,
