@@ -1,22 +1,8 @@
-from pyramid.config import Configurator
 from pyramid.wsgi import wsgiapp2
 
 from switchboard import configure
-from switchboard.manager import context
-from switchboard.signals import request_finished
-
-
-def request_tween_factory(handler, registry):
-
-    def request_tween(request):
-        # Inject the request into Switchboard's context.
-        context['request'] = request
-        response = handler(request)
-        # Notify Switchboard that we're finished with the request.
-        request_finished.send(request)
-        return response
-
-    return request_tween
+from switchboard.admin import app
+from switchboard.middleware import SwitchboardMiddleware
 
 
 def includeme(config):
@@ -27,30 +13,9 @@ def includeme(config):
     # By setting nested to True, we're only looking for switchboard.* settings.
     configure(settings, nested=True)
 
-    # Setup the tween for injecting the request into Switchboard's context.
-    config.add_tween('pyramid_switchboard.request_tween_factory')
-
     # Create the new application using the updated settings.
-    application = make_application(settings, config.registry)
+    switchboard = SwitchboardMiddleware(app)
     config.add_route('switchboard', '/_switchboard/*subpath')
     permission = settings.get('switchboard.permission', 'admin')
-    config.add_view(wsgiapp2(application), route_name='switchboard',
+    config.add_view(wsgiapp2(switchboard), route_name='switchboard',
                     permission=permission)
-
-
-def make_application(settings, parent_registry):
-    """ WSGI application for rendering the switchboard admin."""
-    config = Configurator(settings=settings)
-    # Setup routes and views.
-    config.registry.parent_registry = parent_registry
-    config.add_route('switchboard.main', '/')
-    config.add_route('switchboard.add', '/add')
-    config.add_route('switchboard.update', '/update')
-    config.add_route('switchboard.status', '/status')
-    config.add_route('switchboard.delete', '/delete')
-    config.add_route('switchboard.add_condition', '/add_condition')
-    config.add_route('switchboard.remove_condition', '/remove_condition')
-    config.add_route('switchboard.history', '/history')
-    config.include('pyramid_mako')
-    config.scan('pyramid_switchboard.views')
-    return config.make_wsgi_app()

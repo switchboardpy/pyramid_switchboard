@@ -11,7 +11,7 @@ except IOError:
 install_requires = [
     'pyramid',
     'pyramid_switchboard',
-    'switchboard',
+    'switchboard>=1.3.3',
     'pymongo',
 ]
 

@@ -11,6 +11,7 @@ release:
 	git tag $(VERSION)
 	git push origin $(VERSION)
 	git push origin master
-	python setup.py sdist upload
+	python setup.py sdist bdist_wheel
+	twine upload dist/pyramid_switchboard-$(VERSION)*
 
 .PHONY: install demo release
